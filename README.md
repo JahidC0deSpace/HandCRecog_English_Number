@@ -14,15 +14,15 @@ Image Processing: OpenCV, Pillow<br>
 Frontend: HTML5, CSS3, JavaScript (with Fetch API)Data Handling: NumPy, Pandas<br>
 📂 File StructureThe project is organized into the following structure:<br>
 hcr_flask_app/<br>
-├── app.py                   # Main Flask application routes
-├── prediction.py            # Image processing and model prediction logic
-├── HCR_English_updated.h5   # The trained Keras model file
-├── README.md                # This README file
-└── templates/
-    └── index.html           # Frontend HTML template
-└── static/
-    └── style.css            # CSS for styling the web page
-└── uploads/                 # Temporary folder for uploaded images
+├── app.py                   # Main Flask application routes<br>
+├── prediction.py            # Image processing and model prediction logic<br>
+├── HCR_English_updated.h5   # The trained Keras model file<br>
+├── README.md                # This README file<br>
+└── templates/<br>
+    └── index.html           # Frontend HTML template<br>
+└── static/<br>
+    └── style.css            # CSS for styling the web page<br>
+└── uploads/                 # Temporary folder for uploaded images<br>
 
 🚀 Setup and InstallationFollow these steps to get the application running on your local machine.
 1. PrerequisitesPython 3.8+pip (Python package installer)
