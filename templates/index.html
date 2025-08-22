@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting Recognition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Handwriting Character Recognition</h1>
+        <p>Upload an image or draw a character to see the model's prediction.</p>
+        
+        <div class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'upload-tab')">Upload Image</button>
+            <button class="tab-link" onclick="openTab(event, 'draw-tab')">Draw Character</button>
+        </div>
+
+        <!-- Upload Tab -->
+        <div id="upload-tab" class="tab-content active">
+            <form id="upload-form" enctype="multipart/form-data">
+                <div class="file-input-wrapper">
+                    <button type="button" class="btn-file">Choose Image</button>
+                    <input type="file" id="file-input" name="file" accept="image/*" required>
+                    <span id="file-name">No file chosen</span>
+                </div>
+                <button type="submit" class="btn-submit">Predict Upload</button>
+            </form>
+        </div>
+
+        <!-- Draw Tab -->
+        <div id="draw-tab" class="tab-content">
+            <canvas id="drawing-canvas" width="280" height="280"></canvas>
+            <div class="canvas-controls">
+                <button id="clear-canvas-btn" class="btn-secondary">Clear</button>
+                <button id="predict-drawing-btn" class="btn-submit">Predict Drawing</button>
+            </div>
+        </div>
+
+        <div id="result-container" class="hidden">
+            <h2>Prediction:</h2>
+            <p id="prediction-text"></p>
+        </div>
+
+        <div id="error-container" class="hidden">
+            <p id="error-text"></p>
+        </div>
+        
+        <div id="loading-spinner" class="hidden"></div>
+    </div>
+
+    <script>
+        // --- Common DOM Elements ---
+        const resultContainer = document.getElementById('result-container');
+        const predictionText = document.getElementById('prediction-text');
+        const errorContainer = document.getElementById('error-container');
+        const errorText = document.getElementById('error-text');
+        const loadingSpinner = document.getElementById('loading-spinner');
+
+        // --- Tab Logic ---
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            const tabLinks = document.getElementsByClassName('tab-link');
+            for (let i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // --- Upload Logic ---
+        const uploadForm = document.getElementById('upload-form');
+        const fileInput = document.getElementById('file-input');
+        const fileNameSpan = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', () => {
+            fileNameSpan.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file chosen';
+        });
+
+        document.querySelector('.btn-file').addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (fileInput.files.length === 0) {
+                showError('Please choose an image file first.');
+                return;
+            }
+            showLoading();
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            try {
+                const response = await fetch('/predict', { method: 'POST', body: formData });
+                const data = await response.json();
+                handleResponse(response, data);
+            } catch (error) {
+                showError('A network error occurred.');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // --- Canvas Drawing Logic ---
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        
+        // Style the drawing
+        ctx.lineWidth = 20;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#000000';
+
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        
+        function getTouchPos(canvas, touch) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = e.type.includes('touch') ? getTouchPos(canvas, e.touches[0]) : getMousePos(canvas, e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            e.preventDefault();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = e.type.includes('touch') ? getTouchPos(canvas, e.touches[0]) : getMousePos(canvas, e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            e.preventDefault();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.closePath();
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // Canvas Controls
+        document.getElementById('clear-canvas-btn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            resultContainer.classList.add('hidden');
+            errorContainer.classList.add('hidden');
+        });
+
+        document.getElementById('predict-drawing-btn').addEventListener('click', async () => {
+            showLoading();
+            const imageDataURL = canvas.toDataURL('image/png');
+            
+            try {
+                const response = await fetch('/predict_drawing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageData: imageDataURL })
+                });
+                const data = await response.json();
+                handleResponse(response, data);
+            } catch (error) {
+                showError('A network error occurred.');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // --- Helper Functions for UI updates ---
+        function showLoading() {
+            resultContainer.classList.add('hidden');
+            errorContainer.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loadingSpinner.classList.add('hidden');
+        }
+
+        function showError(message) {
+            errorText.textContent = 'Error: ' + message;
+            errorContainer.classList.remove('hidden');
+        }
+        
+        function showPrediction(prediction) {
+            predictionText.textContent = prediction;
+            resultContainer.classList.remove('hidden');
+        }
+
+        function handleResponse(response, data) {
+            if (response.ok) {
+                showPrediction(data.prediction);
+            } else {
+                showError(data.error || 'An unknown error occurred.');
+            }
+        }
+    </script>
+</body>
+</html>
