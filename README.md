@@ -2,7 +2,7 @@
 
 _A brief one-liner summarizing the project._
 
-> Optional tagline or short project description.
+> This project is a web application that uses a Convolutional Neural Network (CNN) to recognize handwritten characters (letters and numbers). Users can either upload an image of a character or draw one directly on a canvas in the browser to get a real-time prediction from the trained model.
 
 ---
 
