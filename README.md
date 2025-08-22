@@ -1,4 +1,18 @@
-Handwriting Character Recognition Web AppThis project is a web application that uses a Convolutional Neural Network (CNN) to recognize handwritten characters (letters and numbers). Users can either upload an image of a character or draw one directly on a canvas in the browser to get a real-time prediction from the trained model.✨ FeaturesDual Input Methods:Image Upload: Users can upload .png, .jpg, or .jpeg files.Live Drawing Canvas: A responsive HTML5 canvas allows users to draw characters with a mouse or touch input.Deep Learning Model: Utilizes a CNN built with Keras (TensorFlow backend) trained on the EMNIST (ByClass) dataset.Real-Time Prediction: The Flask backend processes the input and returns the model's prediction to the user without a page refresh.Clean User Interface: A simple, modern, and intuitive UI with tabs for easy navigation between the two input methods.🛠️ Tech StackBackend: Python, FlaskMachine Learning: TensorFlow, Keras, scikit-learnImage Processing: OpenCV, PillowFrontend: HTML5, CSS3, JavaScript (with Fetch API)Data Handling: NumPy, Pandas📂 File StructureThe project is organized into the following structure:hcr_flask_app/
+Handwriting Character Recognition Web AppThis project is a web application that uses a Convolutional Neural Network (CNN) to recognize handwritten characters (letters and numbers). Users can either upload an image of a character or draw one directly on a canvas in the browser to get a real-time prediction from the trained model.✨ 
+Features
+Dual Input Methods:
+Image Upload: Users can upload .png, .jpg, or .jpeg files.Live 
+Drawing Canvas: A responsive HTML5 canvas allows users to draw characters with a mouse or touch input.
+Deep Learning Model: Utilizes a CNN built with Keras (TensorFlow backend) trained on the EMNIST (ByClass) dataset.
+Real-Time Prediction: The Flask backend processes the input and returns the model's prediction to the user without a page refresh.
+Clean User Interface: A simple, modern, and intuitive UI with tabs for easy navigation between the two input methods.
+🛠️ Tech Stack
+Backend: Python, Flask
+Machine Learning: TensorFlow, Keras, scikit-learn
+Image Processing: OpenCV, Pillow
+Frontend: HTML5, CSS3, JavaScript (with Fetch API)Data Handling: NumPy, Pandas
+📂 File StructureThe project is organized into the following structure:
+hcr_flask_app/
 ├── app.py                   # Main Flask application routes
 ├── prediction.py            # Image processing and model prediction logic
 ├── HCR_English_updated.h5   # The trained Keras model file
@@ -9,7 +23,9 @@ Handwriting Character Recognition Web AppThis project is a web application that 
     └── style.css            # CSS for styling the web page
 └── uploads/                 # Temporary folder for uploaded images
 
-🚀 Setup and InstallationFollow these steps to get the application running on your local machine.1. PrerequisitesPython 3.8+pip (Python package installer)2. Clone the Repositorygit clone [https://your-repository-url.com/hcr_flask_app.git](https://your-repository-url.com/hcr_flask_app.git)
+🚀 Setup and InstallationFollow these steps to get the application running on your local machine.
+1. PrerequisitesPython 3.8+pip (Python package installer)
+2. 2. Clone the Repositorygit clone [https://your-repository-url.com/hcr_flask_app.git](https://your-repository-url.com/hcr_flask_app.git)
 cd hcr_flask_app
 
 3. Install DependenciesIt is highly recommended to use a virtual environment to manage project dependencies.# Create a virtual environment
