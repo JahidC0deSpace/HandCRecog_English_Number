@@ -79,9 +79,12 @@ Trained on EMNIST (ByClass) dataset: 62 character classes (A–Z, a–z, 0–9)
 - Upload Image: Choose an image file from your system.
 - Draw on Canvas: Use your mouse or touchscreen.
 - Predict: Model gives real-time prediction.
+
+---
 🪪 License
-- This project is licensed under the MIT License.
+ This project is licensed under the MIT License.
 See the LICENSE file for more information.
+---
 🙋‍♂️ Contact
 Created by Md. Jahid Hasan Jitu — feel free to reach out!
 Open issues or suggestions via GitHub Issues
