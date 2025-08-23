@@ -1,4 +1,4 @@
-# 📘 Project Title
+# 📘 Hand Written Character Recognization
 
 _A brief one-liner summarizing the project._
 
